@@ -77,6 +77,9 @@ Route::middleware(['auth','role:admin'])->group(function () {
         //Route untuk mengubah status order
         Route::patch('/order/{id}',[OrderController::class,'update'])->name('admin.orders.update');
 
+        //Route untuk generate pdf riwayat pemesanan
+        Route::get('/download-history',[OrderController::class,'generatePdf'])->name('admin.history.download');
+
     });
 
 });
@@ -112,6 +115,6 @@ Route::middleware(['auth','role:customer'])->group(function(){
     //Route untuk update profile customer
     Route::patch('/profile/{id_customer}',[CustomerController::class,'update'])->name('customer.profile.update');
 
-    
+
 
 });

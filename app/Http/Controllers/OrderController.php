@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\MenuItem;
+use Barryvdh\DomPDF\PDF;
 use DateTimeZone;
 use Illuminate\Support\Facades\Auth;
 
@@ -94,7 +95,7 @@ class OrderController extends Controller
                 $order->update(['status' => 'done']);
 
                 break;
-            
+
             default:
                 # code...
                 break;
@@ -123,9 +124,21 @@ class OrderController extends Controller
         return view('history.index',['orders'=> $orders]);
     }
 
+    //function untuk generate pdf
+    public function generatePdf()
+    {
+        $orders = Order::orderBy('created_at','desc')->get();
+
+        $pdf = app()->make('dompdf.wrapper');
+        $pdf->loadView('pdf.template', ['orders' => $orders, 'title'=>'Riwayat Pesanan']);
+
+
+        return $pdf->stream('history.pdf');
+    }
+
     //function untuk melakukan pembayaran
     public function payment(){
-        //mengambil data order berdasarkan id user 
+        //mengambil data order berdasarkan id user
         $order = Cart::where('user_id','=',Auth::user()->id)->get();
 
         //menampilkan halaman pembayaran
